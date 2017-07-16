@@ -90,3 +90,22 @@ gulp.task('dev', ['browserSync', 'less', 'minify-css', 'minify-js'], function() 
     gulp.watch('*.html', browserSync.reload);
     gulp.watch('js/**/*.js', browserSync.reload);
 });
+
+// Deploy into the parent folder - will run a default task first
+gulp.task('deploy', ['default'], function() {
+    gulp.src(['index.html'])
+        .pipe(gulp.dest('../'));
+
+    gulp.src(['js/grayscale.min.js'])
+        .pipe(gulp.dest('../js'));
+
+    gulp.src(['css/grayscale.min.css'])
+        .pipe(gulp.dest('../css'));
+
+    gulp.src(['img/*'])
+        .pipe(gulp.dest('../img'));
+
+    gulp.src(['vendor/**/*'])
+        .pipe(gulp.dest('../vendor'));
+
+});
