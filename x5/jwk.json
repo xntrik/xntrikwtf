@@ -1,0 +1,7 @@
+{
+  "kty": "RSA",
+  "use": "sig",
+  "kid": "x79MJ80arD0ugZP-64GF5dOWFLr3fMLY5DIbDZwV4a8",
+  "alg": "RS256",
+  "x5u": "https://xntrik.wtf/x5/cert.pem"
+}
