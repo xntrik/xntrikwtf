@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/moon.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown>
+          <textarea data-template>
+            ## Threat Modelling at the Speed of Git
+
+            The following is a web-based presentation of a talk I gave at [AISA CyberCon Melbourne 2024](https://melbourne2024.cyberconference.com.au/).
+          </textarea>
+        </section>
+				<section data-markdown>
+          <textarea data-template>
+            <sub>Press Esc or 'o' to see an overview of the slides</sub>
+
+            <sub>Some of the pages you can navigate down as well</sub>
+          </textarea>
+        </section>
+        <section>
+          <section data-markdown>
+            <textarea data-template>
+              ### Overview
+
+              - I'll attempt to distil a _**threat modelling philosophy**_ I have found myself drawn to time and time again
+              - How _**software**_ fits into this approach
+              - And finally, some _**open source**_ tools that can help you out - including a look at threatcl
+
+              <sub>_This talk is representative of my views only_</sub>
+
+              <sub>_(Click down to read a bit about me)_</sub>
+            </textarea>
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+            ### Hi
+
+            My name is Christian Frichot, and I've had the privilege of working with several amazing organizations across Australia, the United States, and remotely. Among them, _**HashiCorp**_ stands out for teaching me the significance of "_developer flow_" and the critical need to minimize unnecessary friction and toil in the development process.
+
+            Also working at the company that pioneered Infrastructure-as-Code had a profound impact on how I thought about documentation and configuration.
+            </textarea>
+          </section>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### A philosophy of threat modelling
+
+            From my these experiences, I found myself thinking about these three threat modelling concepts, which form this threat modelling philosophy.
+
+            1. Threat modelling is not just for security
+            2. Threat models have to drive impact
+            3. Threat modelling tools should align with software processes
+          </textarea>
+        </section>
+        <section data-background-image="stop.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            <h4>Firstly...</h4>
+            <h3>Not just for security..</h2>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### Threat modelling is not just the realm of security engineers
+
+            Time and time again, I would run into confusion about who owns threat modelling, sometimes even talking to other security people who would tell me:
+
+            > "I don’t know how to do threat modelling."
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### Threat modelling is not just the realm of security engineers
+
+            Even when I was in the consulting space, I remember having conversations with exceptional penetration testers, who would _actually perform_ threat modelling as part of an assessment - they would do this to help guide where they should focus their technical review - and these high skilled individuals would come back and say:
+
+            > “Oh, but this isn’t capital-T threat modelling, I wouldn’t know how to do that.”
+          </textarea>
+        </section>
+        <section data-background-image="suit.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            <h3>Format threat model?</h3>
+            <p>As far as I can tell, the only <em>capital-T</em>, formal threat model, is a threat model performed in formal attire</p>
+          </div>
+        </section>
+        <section>
+          <p>Remember: At its core, threat modelling is a means to try and make a fairly subjective process more objective, repeatable & consistent.</p>
+          <h2>Security should not be gatekeeping threat modelling</h1>
+        </section>
+        <section>
+          Instead, we should be empowering all platform &amp; product engineering teams to start with asking themselves..<br />
+          <h2 class="r-fit-text">What could go wrong?</h2>
+        </section>
+        <section data-background-image="second.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            <h4>Secondly..</h4>
+            <h3>Threat modelling must deliver value</h3>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            <sub>_At a minimum, threat models most do two things to land impact_</sub>
+
+            ### 1. Drive Change
+
+            If you invest efforts in performing a threat model, and then nothing changes, then what was the point?
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Use threat modelling to:
+
+            - Plan future security investment
+            - Address short term security issues
+            - Identify vulnerabilities
+            - Guide technical security reviews
+            - Help with formal risk acceptance
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            <sub>_and the second thing threat models should do to land impact_</sub>
+
+            ### 2. Document for the future
+
+            We also need to ensure that the outcomes for threat modelling are captured for future work
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            - It’s not often that a solution is designed, and then never touched again, or doesn’t evolve, or isn’t expanded upon
+            - You need to leave the trail of breadcrumbs so that future software and security engineers have a clear baseline
+            - Timely documentation can also serve as evidence to demonstrate that you’re meeting any Secure-by-Design promises you’re making to your customers, or perhaps to meet regulatory requirements
+          </textarea>
+        </section>
+        <section style="text-align: left;">
+          <div style="width:50%;">
+            <h4>.. and finally..</h4>
+            <h3>Tooling should align with Engineers</h3>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Any security tooling, be it vulnerability management, security testing, or threat modelling - should be as close to the software engineers processes and tools as possible.
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            For example, vulnerability findings.
+
+            Don't put these in systems outside of the ticket or issue trackers used by your engineering teams.
+
+            ### Reducing and managing toil and friction is absolutely critical
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            If your devs are spending their time in the terminal, using github and github actions, and vscode. If they are centering their efforts on golang and the [hashicorp configuration language syntax](https://developer.hashicorp.com/terraform/language/syntax/configuration) - then you should definitely be as close to that as you can.
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Now, I've been talking a lot about my thoughts on threat modelling, but almost no time talking about it. What is it?
+          </textarea>
+        </section>
+        <section data-background-image="book.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            <h2>What is Threat Modelling?</h2>
+            <p>A collaborative process executed by multiple people to identify technical security issues in a solution, often based on design, architecture, or purely software.</p>
+          </div>
+        </section>
+        <section>
+          <section>
+            <h2 class="r-fit-text">STRIDE</h2>
+            <p>An established mnemonic tool to help with repeatable threat modelling</p>
+            <p style="font-size: 0.6em;">(go down to read more)</p>
+          </section>
+          <section>
+            <h3>Spoofing</h3>
+            <p>Threat action aimed at accessing and use of another user’s credentials, such as username and password.</p>
+          </section>
+          <section>
+            <h3>Tampering</h3>
+            <p>Threat action intending to maliciously change or modify persistent data, such as records in a database, and the alteration of data in transit between two computers over an open network, such as the Internet.</p>
+          </section>
+          <section>
+            <h3>Repudiation</h3>
+            <p>Threat action aimed at performing prohibited operations in a system that lacks the ability to trace the operations.</p>
+          </section>
+          <section>
+            <h3>Information Disclosure</h3>
+            <p>Threat action intending to read a file that one was not granted access to, or to read data in transit.</p>
+          </section>
+          <section>
+            <h3>Denial of Service</h3>
+            <p>Threat action attempting to deny access to valid users, such as by making a web server temporarily unavailable or unusable.</p>
+          </section>
+          <section>
+            <h3>Elevation of Privilege</h3>
+            <p>Threat action intending to gain privileged access to resources in order to gain unauthorized access to information or to compromise a system.</p>
+          </section>
+        </section>
+        <section>
+          I like leveraging the "<strong>5 whys</strong>" approach, but instead of asking "<em>why</em>" something went wrong, we ask...<br />
+          <h2 class="r-fit-text">What could go wrong?</h2>
+        </section>
+        <section>
+          In many of the formal methodologies there is a focus on “<em>diagrams</em>” - and this is where we run into our first ...
+        </section>
+        <section data-background-image="challenge.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            <h2>Challenge</h2>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### Diagram challenges
+
+            - You can't Data Flow Diagram (DFD) everything.
+            - Getting the level detail right is challenging.
+              - Who is the audience of the diagram? 
+            - Diagram quality often varies
+              - How accurate is it to reality?
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### Keeping up with Change
+
+            Diagrams, like documentation, are almost immediately deprecated in the face of change.
+
+            DevOps, CI/CD - all these things are resulting in an environment where organisations are praised on their ability to ship code faster and faster. You often hear quotes such as:
+
+            > “We deploy thousands of times a day to production.. “
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### Keeping up with Change
+
+            Threat modelling at this speed is really challenging. Especially if you're prioritising a collaborative approach. Running synchronous workshops is really great, but you can't run these continuously.
+
+            While threat modelling can be performed asynchronously, this is also difficult when trying to keep up with this pace of change. - and the efforts will fall behind.
+          </textarea>
+        </section>
+        <section data-background-image="industry.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            I've seen many different approaches in the industry to threat modelling.</div>
+        </section>
+        <section>
+          <h2 class="r-fit-text">1. Ad-hoc documentation</h2>
+          <p>Is better than nothing.</p>
+          <p>It could be unstructured, or random confluence pages<p>
+          <p>You <em>may</em> have a standard template!</p>
+        </section>
+        <section>
+          <h2 class="r-fit-text">2. Expensive commercial tools</h2>
+          <p>are better than nothing.</p>
+          <p>Often they integrate into your cloud solutions to help generate data flow diagrams and the like</p>
+          <p>They always come with extensive pre-defined list of threats, risks and controls</p>
+        </section>
+        <section data-background-image="whatif.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            <h3>What if there was another option?</h3>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            What if you integrated your threat models with your source code and pipeline systems?
+
+            I want to talk about the last approach - and in particular..
+
+            ### What can we learn about infrastructure-as-code, DevOps and GitOps
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            One of the things that I really like about technologies such as Infra-as-Code, is that it lays the foundation that ideally you should leverage the same source-code management solution for your infra and ops environments, as you do for your products themselves.
+
+            ### Why is this useful?
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Remember when I was talking about security tooling should be as closer to the engineer's workflow as possible?
+
+            ## Well, this is our chance.
+          </textarea>
+        </section>
+        <section>
+          <section data-markdown>
+            <textarea data-template>
+              ## Git and Source Code Management Solutions are Powerful!
+
+              <sub>For a little background on git, read down</sub>
+            </textarea>
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+              - It’s a distributed source code management utility - often used alongside other products, such as GitLab or GitHub. One of the attributes of Git though is that the source is distributed amongst the devs, and often also centrally stored
+              - You get a full history of changes - so you can see how a threat model has evolved over time
+            </textarea>
+          </section>
+          <section data-markdown>
+            <textarea data-template>
+              - You can develop in branches - so you can draft and iterate on threat models without impacting your main-branch source of truth
+              - You can implement peer review before merging into main branches - so that you can increase the quality of what you’re recording
+              - You can integrate with automation - such as ci/cd
+            </textarea>
+          </section>
+        </section>
+        <section>
+          Let's talk about some open source tools that take a dev-first approach
+        </section>
+        <section>
+          This is <a href="https://threatspec.org">threatspec.org</a>
+          <pre><code data-noescape>
+// @accepts arbitrary file writes to WebApp:FileSystem
+//   with filename restrictions
+// @mitigates WebApp:FileSystem against unauthorised
+//   access with strict file permissions
+
+func (p *Page) save() error {
+    filename := p.Title + ".txt"
+    return ioutil.WriteFile(filename, p.Body, 0600)
+}
+          </code></pre>
+          With this, you annotate your existing source code using comments, such as these.
+        </section>
+        <section data-background-image="threatspec.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:50%;">
+            <p>When you run the threatspec tools, it will output reports, DFDs and other artifacts.</p>
+          </div>
+        </section>
+        <section>
+          This is github.com/OWASP/pytm
+          <pre><code data-noescape>
+#!/usr/bin/env python3
+
+from pytm.pytm import TM, Server, Datastore, Dataflow, Boundary, Actor, Lambda, Data, Classification
+
+tm = TM("my test tm")
+tm.description = "another test tm"
+tm.isOrdered = True
+
+User_Web = Boundary("User/Web")
+Web_DB = Boundary("Web/DB")
+
+user = Actor("User")
+user.inBoundary = User_Web
+
+web = Server("Web Server")
+web.OS = "CloudOS"
+web.isHardened = True
+web.sourceCode = "server/web.cc"
+
+db = Datastore("SQL Database (*)")
+db.OS = "CentOS"
+db.isHardened = False
+db.inBoundary = Web_DB
+db.isSql = True
+db.inScope = False
+db.sourceCode = "model/schema.sql"
+
+comments = Data(
+    name="Comments", 
+    description="Comments in HTML or Markdown",  
+    classification=Classification.PUBLIC,  
+    isPII=False,
+    isCredentials=False,  
+    # credentialsLife=Lifetime.LONG,  
+    isStored=True, 
+    isSourceEncryptedAtRest=False, 
+    isDestEncryptedAtRest=True 
+)
+
+results = Data(
+    name="results", 
+    description="Results of insert op",  
+    classification=Classification.SENSITIVE,  
+    isPII=False, 
+    isCredentials=False,  
+    # credentialsLife=Lifetime.LONG,  
+    isStored=True, 
+    isSourceEncryptedAtRest=False, 
+    isDestEncryptedAtRest=True 
+)
+
+my_lambda = Lambda("cleanDBevery6hours")
+my_lambda.hasAccessControl = True
+my_lambda.inBoundary = Web_DB
+
+my_lambda_to_db = Dataflow(my_lambda, db, "(&lambda;)Periodically cleans DB")
+my_lambda_to_db.protocol = "SQL"
+my_lambda_to_db.dstPort = 3306
+
+user_to_web = Dataflow(user, web, "User enters comments (*)")
+user_to_web.protocol = "HTTP"
+user_to_web.dstPort = 80
+user_to_web.data = comments
+
+web_to_user = Dataflow(web, user, "Comments saved (*)")
+web_to_user.protocol = "HTTP"
+
+web_to_db = Dataflow(web, db, "Insert query with comments")
+web_to_db.protocol = "MySQL"
+web_to_db.dstPort = 3306
+
+db_to_web = Dataflow(db, web, "Comments contents")
+db_to_web.protocol = "MySQL"
+db_to_web.data = results
+
+tm.process()
+          </code></pre>
+          For those into the pythonic arts, PyTM is a good one to check out. Mind you, you do have to write <em>actual</em> python code.
+        </section>
+        <section data-background-image="threatdragon.jpg" data-background-position="right" data-background-size="60%" style="text-align: left;">
+          <div style="width:30%;">
+            <p>This is <a href="https://www.threatdragon.com/#/">Threatdragon</a> from OWASP. Unfortunately, it's not really threat modelling as code</p>
+          </div>
+        </section>
+        <section data-background-image="threatcl.jpg" data-background-position="right" data-background-size="40%" style="text-align: left;">
+          <div style="width:45%;">
+            <p>Now I want to spend some time talking about an open source tool I've been tinkering away on the last few years. <a href="https://threatcl.github.io/">Threatcl</a>.</p>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            At a high level, threatcl is both an HCL specification, and supporting CLI utilities.
+
+            - It uses a simple text format using HCL (so it looks like your terraform)
+            - It has a simple cli-driven developer experience
+            - It is easily integrated into version control systems + CI/CD pipeilnes
+          </textarea>
+        </section>
+        <section>
+          <p>Here is a simple example</p>
+          <p>(go ahead, you can scroll down too)</p>
+          <pre><code data-noescape>
+threatmodel "Tower of London" {
+  description = "A historic castle"
+  author = "@xntrik"
+
+  attributes {
+    new_initiative = "true"
+    internet_facing = "true"
+    initiative_size = "Small"
+  }
+
+  information_asset "crown jewels" {
+    description = "including the imperial state crown"
+    information_classification = "Confidential"
+  }
+
+  usecase {
+    description = "The Queen can fetch the crown"
+  }
+
+  third_party_dependency "community watch" {
+    description = "The community watch helps guard the premise"
+    uptime_dependency = "degraded"
+  }
+
+  threat {
+    description = "Someone who isn't the Queen steals the crown"
+    impacts = ["Confidentiality"]
+
+    expanded_control "Guards" {
+      description = "Trained guards patrol tower"
+      risk_reduction = 75
+    }
+  }
+}
+          </code></pre>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            When you start managing these threat model files in your github or gitlab repos, you get all the associated benefits, such as peer review, git history etc
+          </textarea>
+        </section>
+        <section>
+          <p>Plus, now we can use CI/CD, such as github actions, to validate your hcl files, and even publish dashboards.</p>
+          <pre><code data-noescape>
+name: threatcl dashboard
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  threatcl-dashboard:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: threatcl dashboard
+        uses: threatcl/threatcl-action@v0.0.2
+        with:
+          command: 'dashboard'
+          files: './hcl-files/*'
+          outdir: './dashboard'
+      - name: threatcl custom dashboard
+        uses: threatcl/threatcl-action@v0.0.2
+        with:
+          command: 'dashboard'
+          files: './hcl-files/*'
+          outdir: './custom-dashboard'
+          dashboard-template: './templates/dashboard-template.tpl'
+          dashboard-filename: 'db'
+          threatmodel-template: './templates/threatmodel-template.tpl'
+      - name: threatcl custom html dashboard
+        uses: threatcl/threatcl-action@v0.0.2
+        with:
+          command: 'dashboard'
+          files: './hcl-files/*'
+          outdir: './html-dashboard'
+          dashboard-template: './templates/dashboard-template-html.tpl'
+          dashboard-filename: 'index'
+          threatmodel-template: './templates/threatmodel-template-html.tpl'
+          dashboard-html: 'true'
+          </code></pre>
+          <p>You can see this example <a href="https://github.com/threatcl/threatcl-action-example/blob/main/.github/workflows/threatcl-dashboard-and-export.yml">here</a>.</p>
+        </section>
+        <section data-background-image="threatcldfd.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:45%;">
+            <p>Threatcl can generate data flow diagrams too.</p>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            The specification itself is powerful, and supports a lot of more advanced scenarios, such as these.
+
+            - Include an initial threat model, and expand it
+            - Import controls from other files, including remotely from git repos
+            - Auto generate `information_asset` blocks from your actual terraform files!
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            From here though, I thought, well, how do we normally secure source code files, can we use a similar approach to automatically flag gaps in our threat models?
+
+            Using the threatcl cli you can already do things like validate whether a hcl meets the spec.
+
+            ... but surely we can do more?
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            But when you combine it with something like [semgrep](https://semgrep.dev/), a popular open source static application security testing tool, you can do some awesome stuff.
+
+            Out of the box, semgrep already knows how to process HCL files, so building rules isn’t that complex. 
+
+          </textarea>
+        </section>
+        <section>
+          <p>Here you can see a rule that will flag a threat model that has a threat without any controls.</p>
+          <p>(go ahead, you can scroll down too)</p>
+          <pre><code data-noescape>
+- id: threatcl-missing-control
+    patterns:
+      - pattern: |
+          threat {
+            ...
+            description = "$THREAT"
+            ...
+          }
+      - pattern-not: |
+          threat {
+            ...
+            expanded_control "$CONTROL_NAME" {
+              ...
+            }
+            ...
+          }
+    message: "The `threat` block '$THREAT' is missing an `expanded_control`"
+    severity: WARNING
+    languages: [hcl]
+    metadata:
+      category: security
+      cwe: "CWE-657: Violation of Secure Design Principles"
+      confidence: LOW
+      likelihood: LOW
+      impact: LOW
+      subcategory:
+        - audit
+          </code></pre>
+          <p>See the example <a href="https://github.com/threatcl/threatcl/blob/main/examples/semgrep-threatcl-rules.yaml">here</a></p>
+        </section>
+        <section data-background-image="semgrep.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:45%;">
+            <p>Here is an example of what a finding looks like:</p>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ## Threat model as code + LLM ??
+            
+            And of course, as soon as you have a clearly defined specification of a threat model, it potentially has a pretty natural fit into what LLMs are pretty good at.
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            So I mocked up a GPT in OpenAI's chatgpt system (in about 5 minutes?)
+          </textarea>
+        </section>
+        <section data-background-image="gpt1.jpg">
+        </section>
+        <section data-background-image="gpt2.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:45%;">
+            <p>And guess what? It generated a perfectly valid file on the first attempt.</p>
+          </div>
+        </section>
+        <section data-background-image="gpt3.jpg" data-background-size="50%">
+        </section>
+        <section data-background-image="gpt4.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:45%;">
+            <p>What does the DFD look like?</p>
+          </div>
+        </section>
+        <section data-background-image="gpt5.jpg" data-background-size="50%">
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            Eh.. a bit weird
+
+            But that's easy to fix, if you didn't want to write any HCL. Simply ask it to adjust it.
+          </textarea>
+        </section>
+        <section data-background-image="gpt6.jpg" data-background-size="50%">
+        </section>
+        <section data-background-image="gpt7.jpg" data-background-position="right" data-background-size="50%" style="text-align: left;">
+          <div style="width:45%;">
+            <p>Much better.</p>
+          </div>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            What about adding new controls?
+
+            ## Easy!
+          </textarea>
+        </section>
+        <section data-background-image="gpt8.jpg" data-background-size="50%">
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            # Conclusion
+
+            - Threat modelling can help deliver products that are secure by design
+            - Work with your engineers and developers, get into their flow state
+            - Where it makes sense, leverage open source tools to uplift your maturity
+            - Bonus points if you can integrate into your dev lifecycles!
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            ### Thanks!
+
+            You can reach me:
+
+            <a href="https://xntrik.wtf/">xntrik.wtf</a>
+
+            <a href="http://au.linkedin.com/in/christianfrichot/">linkedin</a>
+
+            <a href="https://bsky.app/profile/xntrik.wtf">bluesky</a>
+
+          </textarea>
+        </section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
